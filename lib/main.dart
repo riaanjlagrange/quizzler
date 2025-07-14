@@ -31,7 +31,31 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  void validateQuestion(bool answer) {
+    bool correctAnswer = answers[questionNumber];
+
+    if (questionNumber + 1 < questions.length) {
+      questionNumber++;
+    } else {
+      questionNumber = 0;
+    }
+
+    if (answer == correctAnswer) {
+      scoreKeeper.add(Icon(Icons.check, color: Colors.green));
+    } else {
+      scoreKeeper.add(Icon(Icons.close, color: Colors.red));
+    }
+  }
+
   List<Icon> scoreKeeper = [];
+  List<String> questions = [
+    'You can lead a cow upstairs, but not downstairs',
+    'Approximately one quarter of human bones are in the feet',
+    'A slug\'s blood is green',
+  ];
+
+  int questionNumber = 0;
+  List<bool> answers = [false, true, true];
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +69,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10),
             child: Center(
               child: Text(
-                "This is a question",
+                questions[questionNumber],
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -63,7 +87,7 @@ class _QuizPageState extends State<QuizPage> {
               child: TextButton(
                 onPressed: () {
                   setState(() {
-                    scoreKeeper.add(Icon(Icons.check, color: Colors.green));
+                    validateQuestion(true);
                   });
                 },
                 child: Text("True", style: TextStyle(color: Colors.white)),
@@ -79,7 +103,7 @@ class _QuizPageState extends State<QuizPage> {
               child: TextButton(
                 onPressed: () {
                   setState(() {
-                    scoreKeeper.add(Icon(Icons.close, color: Colors.red));
+                    validateQuestion(false);
                   });
                 },
                 child: Text("False", style: TextStyle(color: Colors.white)),
