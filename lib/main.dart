@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'quiz_brain.dart';
+
+QuizBrain quizBrain = QuizBrain();
 
 void main() {
   runApp(Quizzler());
@@ -31,31 +34,21 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  void validateQuestion(bool answer) {
-    bool correctAnswer = answers[questionNumber];
-
-    if (questionNumber + 1 < questions.length) {
-      questionNumber++;
-    } else {
-      questionNumber = 0;
-    }
-
-    if (answer == correctAnswer) {
+  String validateQuestion(bool answer) {
+    // Check if the question was correct
+    // And add the corresponding icon to the scoreKeeper.
+    if (quizBrain.validateAnswer(answer)) {
       scoreKeeper.add(Icon(Icons.check, color: Colors.green));
+      quizBrain.goToNextQuestion();
+      return "Question was correct!";
     } else {
       scoreKeeper.add(Icon(Icons.close, color: Colors.red));
+      quizBrain.goToNextQuestion();
+      return "Question was incorrect :(";
     }
   }
 
   List<Icon> scoreKeeper = [];
-  List<String> questions = [
-    'You can lead a cow upstairs, but not downstairs',
-    'Approximately one quarter of human bones are in the feet',
-    'A slug\'s blood is green',
-  ];
-
-  int questionNumber = 0;
-  List<bool> answers = [false, true, true];
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +62,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10),
             child: Center(
               child: Text(
-                questions[questionNumber],
+                quizBrain.getQuestionText(),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -87,7 +80,7 @@ class _QuizPageState extends State<QuizPage> {
               child: TextButton(
                 onPressed: () {
                   setState(() {
-                    validateQuestion(true);
+                    print(validateQuestion(true));
                   });
                 },
                 child: Text("True", style: TextStyle(color: Colors.white)),
@@ -103,7 +96,7 @@ class _QuizPageState extends State<QuizPage> {
               child: TextButton(
                 onPressed: () {
                   setState(() {
-                    validateQuestion(false);
+                    print(validateQuestion(false));
                   });
                 },
                 child: Text("False", style: TextStyle(color: Colors.white)),
