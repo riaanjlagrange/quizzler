@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'quiz_brain.dart';
+import 'package:quickalert/quickalert.dart';
 
 QuizBrain quizBrain = QuizBrain();
 
@@ -34,18 +35,28 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  String validateQuestion(bool answer) {
+  int finished = 0;
+  void checkAnswer(bool answer) {
+    if (quizBrain.onFinalQuestion() && finished > 0) {
+      return;
+    } else if (quizBrain.onFinalQuestion()) {
+      finished++;
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.success,
+        text: "Quiz Completed!",
+      );
+    }
     // Check if the question was correct
     // And add the corresponding icon to the scoreKeeper.
     if (quizBrain.validateAnswer(answer)) {
       scoreKeeper.add(Icon(Icons.check, color: Colors.green));
-      quizBrain.goToNextQuestion();
-      return "Question was correct!";
+      print("Question was correct!");
     } else {
       scoreKeeper.add(Icon(Icons.close, color: Colors.red));
-      quizBrain.goToNextQuestion();
-      return "Question was incorrect :(";
+      print("Question was incorrect :(");
     }
+    quizBrain.goToNextQuestion();
   }
 
   List<Icon> scoreKeeper = [];
@@ -80,7 +91,7 @@ class _QuizPageState extends State<QuizPage> {
               child: TextButton(
                 onPressed: () {
                   setState(() {
-                    print(validateQuestion(true));
+                    checkAnswer(true);
                   });
                 },
                 child: Text("True", style: TextStyle(color: Colors.white)),
@@ -96,7 +107,7 @@ class _QuizPageState extends State<QuizPage> {
               child: TextButton(
                 onPressed: () {
                   setState(() {
-                    print(validateQuestion(false));
+                    checkAnswer(false);
                   });
                 },
                 child: Text("False", style: TextStyle(color: Colors.white)),
